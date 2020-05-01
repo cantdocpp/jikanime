@@ -1,5 +1,6 @@
 class AppNavbar extends HTMLElement {
     constructor() {
+        // Always call super() first in the constructor
         super();
 
         // Component state
@@ -8,11 +9,12 @@ class AppNavbar extends HTMLElement {
         // Create a shadow root
         const shadowRoot = this.attachShadow({ mode: 'open' });
 
-        // Create <nav class="nav"></nav>
+        // Create <nav class="nav"></nav> tag
         const nav = document.createElement('nav');
         nav.setAttribute('class', 'nav');
 
         // Write some css to be applied to the shadow dom
+        // This style will only be applied within this component
         const style = document.createElement('style');
         style.textContent = `
             .nav {
@@ -162,20 +164,33 @@ class AppNavbar extends HTMLElement {
         shadowRoot.appendChild(nav);
     }
 
+
     connectedCallback() {
+        // Select tag to add event listener
+        // In web component, we can't just use document.querySelector('class-name')
+        // We have to select the component name, then using shadowRoot, we can access our component
         const burger = document.querySelector('app-navbar').shadowRoot.querySelector('.nav__mobile');
         const mobileCloseButton = document.querySelector('app-navbar').shadowRoot.querySelector('.nav__close');
         const mobileMenu = document.querySelector('app-navbar').shadowRoot.querySelector('.nav__menu')
+
+        // Add event when the three bar or hamburger button is clicked in mobile view
+        // It's supposed to show our mobile navigation links
         burger.addEventListener('click', () => {
             this.toggleMenu(mobileMenu);
         })
+
+        // Add event when the x close button on mobile navigation is clicked
+        // It's supposed to close our mobile navigation links menu
         mobileCloseButton.addEventListener('click', () => {
             this.closeToggleMenu(mobileMenu)
         })
     }
 
     toggleMenu(mobileMenu) {
+        // To know whether our mobile navigation is active or not, we have to access our state
+        // So if the state if not active (false), we can add our class and set the state to true
         if (!this._mobileActive) {
+            // Add our class to the mobileMenu (.nav__menu class) tag
             mobileMenu.classList.add('nav__menu_open');
             this._mobileActive = true;
         }
